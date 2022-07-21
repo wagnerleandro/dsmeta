@@ -1,29 +1,28 @@
-import {NotificationButton} from "../NotificationButton";
+import { useState, useEffect } from "react";
+import { NotificationButton } from "../NotificationButton";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./styles.css";
-import { useEffect, useState } from "react";
 import axios from "axios";
 import { BASE_URL } from "../../utils/request";
 import { Sale } from "../models/sale";
 
-function SalesCard() {
-  const min = new Date(new Date().setDate(new Date().getDate() - 365));
-  const max = new Date();
-
-  const [minDate, setMindate] = useState(min);
-  const [maxDate, setMaxDate] = useState(max);
-
+export function SalesCard() {
+  const [minDate, setMinDate] = useState<Date>(
+    new Date(new Date().setDate(new Date().getDate() - 365))
+  );
+  const [maxDate, setMaxDate] = useState<Date>(new Date());
   const [sales, setSales] = useState<Sale[]>([]);
 
   useEffect(() => {
+    const dMin = minDate.toISOString().slice(0, 10);
+    const dMax = maxDate.toISOString().slice(0, 10);
 
-    const dmin = minDate.toISOString().slice(0, 10);
-    const dmax = maxDate.toISOString().slice(0, 10);
-
-    axios.get(`${BASE_URL}/sales?minDate=${dmin}&maxDate=${dmax}`).then((response) => {
-      setSales(response.data.content);
-    });
+    axios
+      .get(`${BASE_URL}/sales?minDate=${dMin}&maxDate=${dMax}`)
+      .then((response) => {
+        setSales(response.data.content);
+      });
   }, [minDate, maxDate]);
 
   return (
@@ -33,7 +32,7 @@ function SalesCard() {
         <div className="dsmeta-form-control-container">
           <DatePicker
             selected={minDate}
-            onChange={(date: Date) => setMindate(date)}
+            onChange={(date: Date) => setMinDate(date)}
             className="dsmeta-form-control"
             dateFormat="dd/MM/yyyy"
           />
@@ -62,28 +61,26 @@ function SalesCard() {
             </tr>
           </thead>
           <tbody>
-            {sales.map((sale) => {
-              return (
-                <tr key={sale.id}>
-                  <td className="show992">{sale.id}</td>
-                  <td className="show576">{new Date (sale.date).toLocaleDateString()}</td>
-                  <td>{sale.sellerName}</td>
-                  <td className="show992">{sale.visited}</td>
-                  <td className="show992">{sale.amount.toFixed(2)}</td>
-                  <td>R$ 55300.00</td>
-                  <td>
-                    <div className="dsmeta-red-btn-container">
-                      <NotificationButton  saleId={sale.id}/>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
+            {sales?.map((sale) => (
+              <tr key={sale.id}>
+                <td className="show992">{sale.id}</td>
+                <td className="show576">
+                  {new Date(sale.date).toLocaleDateString()}
+                </td>
+                <td>{sale.sellerName}</td>
+                <td className="show992">{sale.visited}</td>
+                <td className="show992">{sale.deals}</td>
+                <td>{sale.amount.toFixed(2)}</td>
+                <td>
+                  <div className="dsmeta-red-btn-container">
+                    <NotificationButton saleId={sale.id} />
+                  </div>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
     </div>
   );
 }
-
-export default SalesCard;
