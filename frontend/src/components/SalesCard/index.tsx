@@ -5,7 +5,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import "./styles.css";
 import axios from "axios";
 import { BASE_URL } from "../../utils/request";
-import { Sale } from "../models/sale";
+import { Sale } from "../../models/sale";
 
 export function SalesCard() {
   const [minDate, setMinDate] = useState<Date>(
