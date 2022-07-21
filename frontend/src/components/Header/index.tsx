@@ -1,5 +1,3 @@
-
-//@ts-ignore
 import logo from '../../assets/img/logo.svg';
 import './styles.css';
 
